@@ -2,13 +2,20 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-
-const PORT = 3000;
+const PORT = 4000;
+const auth = require('./auth')(app);
+const bookRoutes = require('./routes/BookRoutes');
+const db = require('./lib/db');
 
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(auth.initialize());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(logger('dev'));
+
+
+if(process.env.NODE_ENV !== 'test') {
+    app.use(logger('dev'));
+}
 
 if(app.get('dev') === 'development'){
     app.use(function(err, req, res, next) {
@@ -16,30 +23,22 @@ if(app.get('dev') === 'development'){
         res.json({
             message: err.message,
             error: err
-        })
+        });
     })
 }
 
-app.get('/', (req, res, next) => {
-    res.json({ message: 'success', mood: 'Thankful'});
-    next();
+app.get('*', (req, res) => {
+    res.json({ message: 'Welcome to my ES5 Node App, NodeJs is just very awesome'});
 });
 
-app.get('/books', (req, res) => {
-    res.json([{
-        title:"Aiye le o",
-        author:"fadeyi oloro"
-    },
-    {
-        title:"Aiye le o",
-        author:"fadeyi oloro"
-    }
-]);
-});
+app.use('/api/v1/books', bookRoutes);
 
-app.listen(PORT, () => {
-    console.log(`App running at ${PORT}`);
-});
+db.sequelize.sync().then(function() {
+    console.log('DB created successfully!');
+    app.listen(PORT, () => {
+        console.log(`App running at ${PORT}`);
+    });
+})
+.catch(error => console.log(error));
 
 module.exports = app;
-

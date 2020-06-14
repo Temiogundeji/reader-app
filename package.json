@@ -1,24 +1,27 @@
 {
-  "name": "reader-app",
+  "name": "node-library",
   "version": "1.0.0",
-  "description": "a reader app",
-  "main": "app.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Temiogundeji/reader-app.git"
-  },
-  "keywords": [
-    "books",
-    "reader",
-    "goodreads"
-  ],
-  "author": "temiogundeji",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Temiogundeji/reader-app/issues"
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jwt-simple": "^0.5.6",
+    "nodemon": "^2.0.4",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "pg": "^8.2.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.12"
   },
-  "homepage": "https://github.com/Temiogundeji/reader-app#readme"
+  "devDependencies": {
+    "morgan": "^1.10.0"
+  }
 }
