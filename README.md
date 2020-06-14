@@ -14,8 +14,8 @@
     - Clone the repository
 ``` 
     git clone https://github.com/Temiogundeji/reader-app.git
-```
+    
     - Install all npm packages
 ```    
     npm install
-```     
+   
