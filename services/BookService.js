@@ -1,5 +1,4 @@
-const Book = require('../models/Book');
-
+const Book = require('../lib/db').Book;
 module.exports = {
    getAllBooks: async() => {
         try{
@@ -14,8 +13,7 @@ module.exports = {
     addBook: async (newBook) => {
         try{
             return await Book.create(newBook);
-        }
-        catch(error){
+        }        catch(error){
             throw error;
         }
     },

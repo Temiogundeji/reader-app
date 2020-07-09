@@ -6,7 +6,11 @@ module.exports = {
         try{
             const allBooks = await BookService.getAllBooks();
             if(allBooks.length > 0){
-                util.setSuccess(200, 'All Books retrieved!')
+                // util.setSuccess(200, 'All Books retrieved!')
+                res.status(200).status({
+                    books: allBooks,
+                    message:'Book fetched successfully!'
+                })
             }
             else{
                 util.setSuccess(200, 'No Books found!')
@@ -20,13 +24,14 @@ module.exports = {
     },
 
   addBook:  async (req, res) => {
-        const { title, price, description } = req.body;
-        if(!title || !price || !description){
+        const { title, author, img } = req.body;
+        if(title === null || author === null  || img === null ){
             util.setError(400, 'Please provide complete details');
             return util.send(res);
         }
-        const newBook = req.body;
+       
         try{
+            const newBook = req.body;
             const createdBook = await BookService.addBook(newBook);
             util.setSuccess(201, 'Book Added!', createdBook);
             return util.send(res);

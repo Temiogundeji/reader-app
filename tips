@@ -1,0 +1,3 @@
+to implement the admin system, 
+add a boolean value to the fields set it to 1 if an admin,
+and to 0 if a non-admin.
