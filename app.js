@@ -2,10 +2,14 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const PORT = 8000;
+const PORT = 3000;
 const auth = require('./auth')(app);
 const bookRoutes = require('./routes/BookRoutes');
-const db = require('./lib/db');
+const config = require('dotenv');
+
+config.config();
+
+// const db = require('./models/index');
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -40,12 +44,14 @@ app.get('/data', (req, res) => {
 
 app.use('/api/v1/books', bookRoutes);
 
-db.sequelize.sync().then(function() {
-    console.log('DB created successfully!');
-    app.listen(PORT, () => {
-        console.log(`App running at ${PORT}`);
-    });
-})
-.catch(error => console.log(error));
+app.listen(PORT, () => {
+    console.log(`App running at ${PORT}`);
+});
+
+// db.sequelize.sync().then(function() {
+//     console.log('DB created successfully!');
+    
+// })
+// .catch(error => console.log(error));
 
 module.exports = app;

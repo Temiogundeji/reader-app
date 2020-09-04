@@ -1,63 +1,79 @@
 const BookService = require('../services/BookService');
+const Book = require('../models/index').Book;
 const util = require('../lib/Utils');
 
 module.exports = {
-    getAllBooks : async (req, res) => {
+    getAllBooks : async(req, res) => {
         try{
-            const allBooks = await BookService.getAllBooks();
+            const allBooks = await BookService.getAllBooks({
+                order: ['id', 'ASC']
+            });
+            
             if(allBooks.length > 0){
-                // util.setSuccess(200, 'All Books retrieved!')
-                res.status(200).status({
-                    books: allBooks,
-                    message:'Book fetched successfully!'
-                })
+                util.setSuccess(200, 'All Books retrieved!', allBooks)
             }
             else{
                 util.setSuccess(200, 'No Books found!')
             }
             return util.send(res)
+            
         }
         catch(error){
             util.setError(400, error);
             return util.send(res);
         }
     },
-
-  addBook:  async (req, res) => {
-        const { title, author, img } = req.body;
-        if(title === null || author === null  || img === null ){
-            util.setError(400, 'Please provide complete details');
-            return util.send(res);
-        }
-       
+    getFavorites: async (req, res) => {
         try{
-            const newBook = req.body;
-            const createdBook = await BookService.addBook(newBook);
-            util.setSuccess(201, 'Book Added!', createdBook);
-            return util.send(res);
+            const favoriteBooks = await BookService.getBookByFavorite();
+            console.log(favoriteBooks);
+            
+                res.status(200).json({
+                    message: 'Books fetched successfully!',
+                    data: favoriteBooks
+                });
         }
-        catch(error){
-            util.setError(400, error.message);
-            return util.send(res);
+        catch(error) {
+            console.log(error);
         }
     },
 
-     updateBook:  async (req, res) => {
+    addBook: async (req, res) => {
+        try{
+            const createdBook = await BookService.addBook(req.body);
+            res.status(201).json({
+                data: createdBook,
+                message: 'Book has been added successfully!'
+            });
+        }
+        catch(error){
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+    },
+
+     updateBook: async (req, res) => {
         const alteredBook = req.body;
         const { id } = req.params;
+        
         if(!Number(id)){
-            util.setError(400, 'Please input a valid numeric value');
-            return util.send(res);
+            return res.status(400).send('Please input a valid numeric value');
         }
+
         try{
-            const updatedBook = await BookService.updateBook(id, alteredBook);
+            const updatedBook = BookService.updateBook(id, alteredBook);
             if(!updatedBook){
-                util.setError(404, `Cannot find book with the id: ${id}`);
+                res.status(404).json({
+                    message: `Cannot find book with the id ${id}`
+                });
             }
             else{
-                util.setSuccess(200, 'Book updated', updatedBook);
+                res.status(200).json({
+                    message: 'Book updated',
+                    data: updatedBook
+                });
             }
-            return util.send(res);
         }
         catch(error){
             util.setError(404, error);
@@ -65,7 +81,7 @@ module.exports = {
         }
     },
 
-    getABook: async (req, res) => {
+    getABook: async(req, res) => {
         const { id } = req.params;
 
         if(!Number(id)){
@@ -75,7 +91,7 @@ module.exports = {
         try{
             const theBook = await BookService.getABook(id);
             if(!theBook){
-                util.setError(404, `Cannot find book with the id ${id}`);
+               util.setError(404, `Cannot find book with the id ${id}`);
             }
             else{
                 util.setSuccess(200, 'Found Book', theBook);

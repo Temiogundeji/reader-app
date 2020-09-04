@@ -3,7 +3,7 @@ const { Strategy, ExtractJwt } = require('passport-jwt');
 
 require('dotenv').config();
 
-const User = require('./models/User');
+const User = require('./models/index').User;
 
 module.exports = (app) => {
     const opts = {

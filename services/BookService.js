@@ -1,10 +1,10 @@
-const Book = require('../lib/db').Book;
+const Book = require('../models').Book;
+const { Op } = require('sequelize');
+
 module.exports = {
    getAllBooks: async() => {
         try{
-            return await Book.findAll({
-                attributes: ['id', 'author', 'title']
-            });
+            return await Book.findAll();
         } catch(error){
             throw error;
         }
@@ -13,8 +13,23 @@ module.exports = {
     addBook: async (newBook) => {
         try{
             return await Book.create(newBook);
-        }        catch(error){
+        }        
+        catch(error){
             throw error;
+        }
+    },
+
+    getBookByFavorite: async () => {
+        
+        try{
+            const favoriteBooks = await Book.findAll({
+                where: { isFavorite: true }
+            });
+            
+            return favoriteBooks;
+        }
+        catch(error){
+            console.log(error);
         }
     },
 
@@ -28,6 +43,7 @@ module.exports = {
                 await Book.update(updateBook, { where: { id: Number(id) }})
                 return updateBook;
             }
+            
         }
         catch(error){
             throw error;
