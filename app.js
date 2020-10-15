@@ -2,10 +2,16 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const PORT = 8000;
-const auth = require('./auth')(app);
+const PORT = 3000;
+// const auth = require('./auth')(app);
 const bookRoutes = require('./routes/BookRoutes');
+const userRoutes = require('./routes/UserRoutes');
+const securedRoutes = require('./routes/secured-routes');
+
 const config = require('dotenv');
+const passport = require('passport');
+
+require("./auth/auth");
 
 config.config();
 
@@ -13,7 +19,8 @@ config.config();
 
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(auth.initialize());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -43,15 +50,11 @@ app.get('/data', (req, res) => {
 });
 
 app.use('/api/v1/books', bookRoutes);
+app.use('/', userRoutes);
+app.use('/user', passport.authenticate('jwt', {session: false}, securedRoutes));
 
 app.listen(PORT, () => {
     console.log(`App running at ${PORT}`);
 });
-
-// db.sequelize.sync().then(function() {
-//     console.log('DB created successfully!');
-    
-// })
-// .catch(error => console.log(error));
 
 module.exports = app;
